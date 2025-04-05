@@ -26,6 +26,7 @@ use crate::task::TaskOnce;
 pub(crate) struct CSPViolationReporter {
     sample: Option<String>,
     filename: String,
+    directive: String,
     report_only: bool,
     runtime_code: RuntimeCode,
     line_number: u32,
@@ -60,12 +61,14 @@ impl CSPViolationReporter {
         report_only: bool,
         runtime_code: RuntimeCode,
         filename: String,
+        directive: String,
         line_number: u32,
         column_number: u32,
     ) -> CSPViolationReporter {
         CSPViolationReporter {
             sample,
             filename,
+            directive,
             report_only,
             runtime_code,
             line_number,
@@ -95,8 +98,8 @@ impl CSPViolationReporter {
             status_code: global.status_code().unwrap_or(200),
             document_url: self.strip_url_for_reports(global.get_url()),
             source_file: self.filename.clone(),
-            violated_directive: "script-src".to_owned(),
-            effective_directive: "script-src".to_owned(),
+            violated_directive: self.directive.clone(),
+            effective_directive: self.directive.clone(),
             line_number: self.line_number,
             column_number: self.column_number,
             original_policy: String::default(),
