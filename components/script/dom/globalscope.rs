@@ -123,6 +123,7 @@ use crate::dom::performance::Performance;
 use crate::dom::performanceobserver::VALID_ENTRY_TYPES;
 use crate::dom::promise::Promise;
 use crate::dom::readablestream::{CrossRealmTransformReadable, ReadableStream};
+use crate::dom::reportingobserver::ReportingObserver;
 use crate::dom::serviceworker::ServiceWorker;
 use crate::dom::serviceworkerregistration::ServiceWorkerRegistration;
 use crate::dom::trustedtypepolicyfactory::TrustedTypePolicyFactory;
@@ -3434,6 +3435,26 @@ impl GlobalScope {
         }
         if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
             return worker.TrustedTypes(can_gc);
+        }
+        unreachable!();
+    }
+
+    pub(crate) fn append_reporting_observer(&self, reporting_observer: &ReportingObserver) {
+        if let Some(window) = self.downcast::<Window>() {
+            return window.append_reporting_observer(Dom::from_ref(reporting_observer));
+        }
+        if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
+            return worker.append_reporting_observer(Dom::from_ref(reporting_observer));
+        }
+        unreachable!();
+    }
+
+    pub(crate) fn remove_reporting_observer(&self, reporting_observer: &ReportingObserver) {
+        if let Some(window) = self.downcast::<Window>() {
+            return window.remove_reporting_observer(reporting_observer);
+        }
+        if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
+            return worker.remove_reporting_observer(reporting_observer);
         }
         unreachable!();
     }

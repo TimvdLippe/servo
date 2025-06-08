@@ -46,7 +46,7 @@ use crate::dom::bindings::codegen::UnionTypes::{
 use crate::dom::bindings::error::{Error, ErrorResult, Fallible, report_pending_exception};
 use crate::dom::bindings::inheritance::Castable;
 use crate::dom::bindings::reflector::DomObject;
-use crate::dom::bindings::root::{DomRoot, MutNullableDom};
+use crate::dom::bindings::root::{Dom, DomRoot, MutNullableDom};
 use crate::dom::bindings::settings_stack::AutoEntryScript;
 use crate::dom::bindings::str::{DOMString, USVString};
 use crate::dom::bindings::trace::RootedTraceableBox;
@@ -55,6 +55,7 @@ use crate::dom::dedicatedworkerglobalscope::DedicatedWorkerGlobalScope;
 use crate::dom::globalscope::GlobalScope;
 use crate::dom::performance::Performance;
 use crate::dom::promise::Promise;
+use crate::dom::reportingobserver::ReportingObserver;
 use crate::dom::trustedscripturl::TrustedScriptURL;
 use crate::dom::trustedtypepolicyfactory::TrustedTypePolicyFactory;
 #[cfg(feature = "webgpu")]
@@ -136,6 +137,9 @@ pub(crate) struct WorkerGlobalScope {
 
     #[no_trace]
     insecure_requests_policy: InsecureRequestsPolicy,
+
+    /// <https://w3c.github.io/reporting/#windoworworkerglobalscope-registered-reporting-observer-list>
+    reporting_observer_list: DomRefCell<Vec<Dom<ReportingObserver>>>,
 }
 
 impl WorkerGlobalScope {
@@ -191,6 +195,7 @@ impl WorkerGlobalScope {
             timer_scheduler: RefCell::default(),
             insecure_requests_policy,
             trusted_types: Default::default(),
+            reporting_observer_list: Default::default(),
         }
     }
 
@@ -252,6 +257,23 @@ impl WorkerGlobalScope {
 
     pub(crate) fn set_csp_list(&self, csp_list: Option<CspList>) {
         self.policy_container.borrow_mut().set_csp_list(csp_list);
+    }
+
+    pub(crate) fn append_reporting_observer(&self, reporting_observer: Dom<ReportingObserver>) {
+        self.reporting_observer_list
+            .borrow_mut()
+            .push(reporting_observer);
+    }
+
+    pub(crate) fn remove_reporting_observer(&self, reporting_observer: &ReportingObserver) {
+        if let Some(index) = self
+            .reporting_observer_list
+            .borrow()
+            .iter()
+            .position(|observer| &**observer == reporting_observer)
+        {
+            self.reporting_observer_list.borrow_mut().remove(index);
+        }
     }
 
     /// Get a mutable reference to the [`TimerScheduler`] for this [`ServiceWorkerGlobalScope`].
