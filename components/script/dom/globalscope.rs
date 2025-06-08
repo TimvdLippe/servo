@@ -124,6 +124,7 @@ use crate::dom::performance::Performance;
 use crate::dom::performanceobserver::VALID_ENTRY_TYPES;
 use crate::dom::promise::Promise;
 use crate::dom::readablestream::{CrossRealmTransformReadable, ReadableStream};
+use crate::dom::report::Report;
 use crate::dom::reportingobserver::ReportingObserver;
 use crate::dom::serviceworker::ServiceWorker;
 use crate::dom::serviceworkerregistration::ServiceWorkerRegistration;
@@ -3453,10 +3454,10 @@ impl GlobalScope {
 
     pub(crate) fn append_reporting_observer(&self, reporting_observer: &ReportingObserver) {
         if let Some(window) = self.downcast::<Window>() {
-            return window.append_reporting_observer(Dom::from_ref(reporting_observer));
+            return window.append_reporting_observer(reporting_observer);
         }
         if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
-            return worker.append_reporting_observer(Dom::from_ref(reporting_observer));
+            return worker.append_reporting_observer(reporting_observer);
         }
         unreachable!();
     }
@@ -3467,6 +3468,26 @@ impl GlobalScope {
         }
         if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
             return worker.remove_reporting_observer(reporting_observer);
+        }
+        unreachable!();
+    }
+
+    pub(crate) fn registered_reporting_observers(&self) -> Vec<DomRoot<ReportingObserver>> {
+        if let Some(window) = self.downcast::<Window>() {
+            return window.registered_reporting_observers();
+        }
+        if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
+            return worker.registered_reporting_observers();
+        }
+        unreachable!();
+    }
+
+    pub(crate) fn append_report(&self, report: &Report) {
+        if let Some(window) = self.downcast::<Window>() {
+            return window.append_report(report);
+        }
+        if let Some(worker) = self.downcast::<WorkerGlobalScope>() {
+            return worker.append_report(report);
         }
         unreachable!();
     }

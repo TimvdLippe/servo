@@ -317,7 +317,7 @@ fn serialize_disposition<S: serde::Serializer>(
 }
 
 /// <https://w3c.github.io/webappsec-csp/#strip-url-for-use-in-reports>
-fn strip_url_for_reports(mut url: ServoUrl) -> String {
+pub(crate) fn strip_url_for_reports(mut url: ServoUrl) -> String {
     let scheme = url.scheme();
     // > Step 1: If url’s scheme is not an HTTP(S) scheme, then return url’s scheme.
     if scheme != "https" && scheme != "http" {

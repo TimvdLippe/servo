@@ -20,6 +20,10 @@ impl ReportBody {
             body,
         }
     }
+
+    pub(crate) fn copy(&self) -> ReportBody {
+        ReportBody::new_inherited(self.body.clone())
+    }
 }
 
 impl ReportBodyMethods<crate::DomTypeHolder> for ReportBody {}

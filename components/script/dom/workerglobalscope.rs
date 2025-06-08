@@ -55,6 +55,7 @@ use crate::dom::dedicatedworkerglobalscope::DedicatedWorkerGlobalScope;
 use crate::dom::globalscope::GlobalScope;
 use crate::dom::performance::Performance;
 use crate::dom::promise::Promise;
+use crate::dom::report::Report;
 use crate::dom::reportingobserver::ReportingObserver;
 use crate::dom::trustedscripturl::TrustedScriptURL;
 use crate::dom::trustedtypepolicyfactory::TrustedTypePolicyFactory;
@@ -140,6 +141,9 @@ pub(crate) struct WorkerGlobalScope {
 
     /// <https://w3c.github.io/reporting/#windoworworkerglobalscope-registered-reporting-observer-list>
     reporting_observer_list: DomRefCell<Vec<Dom<ReportingObserver>>>,
+
+    /// <https://w3c.github.io/reporting/#windoworworkerglobalscope-reports>
+    report_list: DomRefCell<Vec<Dom<Report>>>,
 }
 
 impl WorkerGlobalScope {
@@ -197,6 +201,7 @@ impl WorkerGlobalScope {
             insecure_requests_policy,
             trusted_types: Default::default(),
             reporting_observer_list: Default::default(),
+            report_list: Default::default(),
         }
     }
 
@@ -260,21 +265,28 @@ impl WorkerGlobalScope {
         self.policy_container.borrow_mut().set_csp_list(csp_list);
     }
 
-    pub(crate) fn append_reporting_observer(&self, reporting_observer: Dom<ReportingObserver>) {
+    pub(crate) fn append_reporting_observer(&self, reporting_observer: &ReportingObserver) {
         self.reporting_observer_list
             .borrow_mut()
-            .push(reporting_observer);
+            .push(Dom::from_ref(reporting_observer));
     }
 
     pub(crate) fn remove_reporting_observer(&self, reporting_observer: &ReportingObserver) {
-        if let Some(index) = self
-            .reporting_observer_list
+        self.reporting_observer_list
+            .borrow_mut()
+            .retain(|observer| &**observer != reporting_observer);
+    }
+
+    pub(crate) fn registered_reporting_observers(&self) -> Vec<DomRoot<ReportingObserver>> {
+        self.reporting_observer_list
             .borrow()
             .iter()
-            .position(|observer| &**observer == reporting_observer)
-        {
-            self.reporting_observer_list.borrow_mut().remove(index);
-        }
+            .map(|o| DomRoot::from_ref(&**o))
+            .collect()
+    }
+
+    pub(crate) fn append_report(&self, report: &Report) {
+        self.report_list.borrow_mut().push(Dom::from_ref(report));
     }
 
     /// Get a mutable reference to the [`TimerScheduler`] for this [`ServiceWorkerGlobalScope`].
