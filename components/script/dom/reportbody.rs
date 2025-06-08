@@ -4,10 +4,7 @@
 use dom_struct::dom_struct;
 
 use crate::dom::bindings::codegen::Bindings::ReportingObserverBinding::ReportBodyMethods;
-use crate::dom::bindings::reflector::{Reflector, reflect_dom_object};
-use crate::dom::bindings::root::DomRoot;
-use crate::dom::globalscope::GlobalScope;
-use crate::script_runtime::CanGc;
+use crate::dom::bindings::reflector::Reflector;
 
 #[dom_struct]
 pub(crate) struct ReportBody {
@@ -17,16 +14,11 @@ pub(crate) struct ReportBody {
 }
 
 impl ReportBody {
-    fn new_inherited(body: String) -> Self {
+    pub(crate) fn new_inherited(body: String) -> Self {
         Self {
             reflector_: Reflector::new(),
             body,
         }
-    }
-
-    #[cfg_attr(crown, allow(crown::unrooted_must_root))]
-    pub(crate) fn new(body: String, global: &GlobalScope, can_gc: CanGc) -> DomRoot<Self> {
-        reflect_dom_object(Box::new(Self::new_inherited(body)), global, can_gc)
     }
 }
 
