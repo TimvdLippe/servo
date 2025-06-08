@@ -3251,6 +3251,7 @@ impl ScriptThread {
             incomplete.viewport_details,
             origin.clone(),
             final_url.clone(),
+            Some(final_url.clone()),
             incomplete.navigation_start,
             self.webgl_chan.as_ref().map(|chan| chan.channel()),
             #[cfg(feature = "webxr")]

@@ -3089,6 +3089,7 @@ impl Window {
         viewport_details: ViewportDetails,
         origin: MutableOrigin,
         creator_url: ServoUrl,
+        top_level_creator_url: Option<ServoUrl>,
         navigation_start: CrossProcessInstant,
         webgl_chan: Option<WebGLChan>,
         #[cfg(feature = "webxr")] webxr_registry: Option<webxr_api::Registry>,
@@ -3124,7 +3125,8 @@ impl Window {
                 constellation_chan,
                 resource_threads,
                 origin,
-                Some(creator_url),
+                creator_url,
+                top_level_creator_url,
                 microtask_queue,
                 #[cfg(feature = "webgpu")]
                 gpu_id_hub,
