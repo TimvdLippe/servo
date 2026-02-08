@@ -350,7 +350,11 @@ impl DedicatedWorkerGlobalScope {
             insecure_requests_policy,
             font_context,
         ));
-        let scope = DedicatedWorkerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(cx, &scope.origin(), scope);
+        let scope = DedicatedWorkerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(
+            cx,
+            &scope.origin(),
+            scope,
+        );
         scope
             .upcast::<WorkerGlobalScope>()
             .init_debugger_global(debugger_global, cx);

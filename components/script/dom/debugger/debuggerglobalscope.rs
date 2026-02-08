@@ -127,7 +127,8 @@ impl DebuggerGlobalScope {
             pipeline_id: debugger_pipeline_id,
             origin: MutableOrigin::new(ImmutableOrigin::new_opaque()),
         });
-        let global = DebuggerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(cx, &global.origin(), global);
+        let global =
+            DebuggerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(cx, &global.origin(), global);
 
         let mut realm = enter_auto_realm(cx, &*global);
         let mut realm = realm.current_realm();

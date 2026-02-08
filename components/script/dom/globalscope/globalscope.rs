@@ -2100,8 +2100,7 @@ impl GlobalScope {
         let origin = self.origin().immutable().clone();
 
         let (tx, rx) = profile_generic_channel::channel(self.time_profiler_chan().clone()).unwrap();
-        let msg =
-            FileManagerThreadMsg::AddSlicedURLEntry(*parent_file_id, *rel_pos, tx, origin);
+        let msg = FileManagerThreadMsg::AddSlicedURLEntry(*parent_file_id, *rel_pos, tx, origin);
         self.send_to_file_manager(msg);
         match rx.recv().expect("File manager thread is down.") {
             Ok(new_id) => {

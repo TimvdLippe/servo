@@ -307,7 +307,11 @@ impl ServiceWorkerGlobalScope {
             font_context,
             worker_id,
         ));
-        let scope = ServiceWorkerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(cx, &scope.origin(), scope);
+        let scope = ServiceWorkerGlobalScopeBinding::Wrap::<crate::DomTypeHolder>(
+            cx,
+            &scope.origin(),
+            scope,
+        );
         scope
             .upcast::<WorkerGlobalScope>()
             .init_debugger_global(debugger_global, cx);
