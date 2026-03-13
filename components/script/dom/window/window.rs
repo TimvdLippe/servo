@@ -3126,12 +3126,20 @@ impl Window {
     }
 
     pub(crate) fn init_window_proxy(&self, window_proxy: &WindowProxy) {
-        assert!(self.window_proxy.get().is_none());
+        assert!(
+            self.window_proxy
+                .get()
+                .is_none_or(|current_proxy| &*current_proxy as *const WindowProxy == window_proxy)
+        );
         self.window_proxy.set(Some(window_proxy));
     }
 
     pub(crate) fn init_document(&self, document: &Document) {
-        assert!(self.document.get().is_none());
+        assert!(
+            self.document
+                .get()
+                .is_none_or(|document| document.is_initial_about_blank())
+        );
         assert!(document.window() == self);
         self.document.set(Some(document));
     }
