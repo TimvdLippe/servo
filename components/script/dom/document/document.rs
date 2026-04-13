@@ -690,6 +690,8 @@ pub(crate) struct Document {
 
     /// <https://html.spec.whatwg.org/multipage/#doc-history>
     history: MutNullableDom<History>,
+
+    window_replaced: Cell<bool>,
 }
 
 impl Document {
@@ -726,7 +728,7 @@ impl Document {
         // TODO
 
         // Step 4. If document's salvageable state is false, then:
-        if !self.salvageable.get() {
+        if !self.salvageable.get() && self.is_window_relevant() {
             let global_scope = self.window.as_global_scope();
 
             // Step 4.1. For each EventSource object eventSource whose relevant global object is equal to window, forcibly close eventSource.
@@ -941,7 +943,9 @@ impl Document {
             ClientContextId::build(pipeline_id.namespace_id.0, pipeline_id.index.0.get());
 
         if activity != DocumentActivity::FullyActive {
-            self.window().suspend(cx);
+            if self.is_window_relevant() {
+                self.window().suspend(cx);
+            }
             media.suspend(&client_context_id);
             return;
         }
@@ -3743,7 +3747,16 @@ impl Document {
             )),
             image_cache,
             history: Default::default(),
+            window_replaced: Default::default(),
         }
+    }
+
+    pub(crate) fn disown_window(&self) {
+        self.window_replaced.set(true);
+    }
+
+    pub(crate) fn is_window_relevant(&self) -> bool {
+        !self.window_replaced.get()
     }
 
     /// Returns a policy value that should be used for fetches initiated by this document.
