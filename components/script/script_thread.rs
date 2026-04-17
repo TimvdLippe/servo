@@ -2002,6 +2002,9 @@ impl ScriptThread {
             ScriptThreadMessage::TriggerGarbageCollection => unsafe {
                 JS_GC(*GlobalScope::get_cx(), GCReason::API);
             },
+            ScriptThreadMessage::DumpBlockingLoads => {
+                self.documents.borrow().dump_blocking_loads();
+            },
         }
     }
 

@@ -715,6 +715,11 @@ impl Document {
         self.pipeline_id
     }
 
+    pub(crate) fn dump_blocking_loads(&self) {
+        println!("({:?}) {:?}", self.pipeline_id, self.url());
+        self.loader().dump();
+    }
+
     /// <https://html.spec.whatwg.org/multipage/#unloading-document-cleanup-steps>
     fn unloading_cleanup_steps(&self) {
         // Step 1. Let window be document's relevant global object.

@@ -25,6 +25,12 @@ pub(crate) struct DocumentCollection {
 }
 
 impl DocumentCollection {
+    pub(crate) fn dump_blocking_loads(&self) {
+        for (_, document) in self.map.0.iter() {
+            document.dump_blocking_loads();
+        }
+    }
+
     pub(crate) fn insert(&mut self, pipeline_id: PipelineId, doc: &Document) {
         self.map.insert(pipeline_id, Dom::from_ref(doc));
     }

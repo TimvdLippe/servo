@@ -1093,6 +1093,10 @@ impl Servo {
         &self.0.site_data_manager
     }
 
+    pub fn dump_blocking_loads(&self) {
+        self.0.constellation_proxy.send(EmbedderToConstellationMessage::DumpBlockingLoads);
+    }
+
     pub(crate) fn paint<'a>(&'a self) -> Ref<'a, Paint> {
         self.0.paint.borrow()
     }

@@ -342,6 +342,9 @@ impl HeadedWindow {
             .shortcut(CMD_OR_CONTROL, 'W', || {
                 window.close_webview(active_webview.id());
             })
+            .shortcut(CMD_OR_CONTROL, 'D', || {
+                state.servo().dump_blocking_loads();
+            })
             .shortcut(CMD_OR_CONTROL, 'P', || {
                 let rate = env::var("SAMPLING_RATE")
                     .ok()

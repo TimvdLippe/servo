@@ -1553,6 +1553,11 @@ where
             EmbedderToConstellationMessage::SetAccessibilityActive(webview_id, active) => {
                 self.set_accessibility_active(webview_id, active);
             },
+            EmbedderToConstellationMessage::DumpBlockingLoads => {
+                for event_loop in self.event_loops() {
+                    let _ = event_loop.send(ScriptThreadMessage::DumpBlockingLoads);
+                }
+            },
         }
     }
 

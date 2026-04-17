@@ -329,6 +329,8 @@ pub enum ScriptThreadMessage {
     SetAccessibilityActive(PipelineId, bool, Epoch),
     /// Force a garbage collection in this script thread.
     TriggerGarbageCollection,
+    ///
+    DumpBlockingLoads,
 }
 
 impl fmt::Debug for ScriptThreadMessage {

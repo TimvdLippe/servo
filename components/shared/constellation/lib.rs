@@ -45,6 +45,8 @@ use webrender_api::{ExternalScrollId, ImageKey};
 pub enum EmbedderToConstellationMessage {
     /// Exit the constellation.
     Exit,
+    ///
+    DumpBlockingLoads,
     /// Whether to allow script to navigate.
     AllowNavigationResponse(PipelineId, bool),
     /// Request to load a page, with optionally additional data in [`URLRequest`].

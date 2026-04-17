@@ -110,6 +110,7 @@ impl MixedMessage {
                 ScriptThreadMessage::UpdatePinchZoomInfos(id, _) => Some(*id),
                 ScriptThreadMessage::SetAccessibilityActive(..) => None,
                 ScriptThreadMessage::TriggerGarbageCollection => None,
+                ScriptThreadMessage::DumpBlockingLoads => None,
             },
             MixedMessage::FromScript(inner_msg) => match inner_msg {
                 MainThreadScriptMsg::Common(CommonScriptMsg::Task(_, _, pipeline_id, _)) => {

@@ -99,6 +99,12 @@ impl DocumentLoader {
         DocumentLoader::new_with_threads(existing.resource_threads.clone(), None)
     }
 
+    pub(crate) fn dump(&self) {
+        for load in &self.blocking_loads {
+            println!("- {load:?}");
+        }
+    }
+
     pub(crate) fn new_with_threads(
         resource_threads: ResourceThreads,
         initial_load: Option<ServoUrl>,
