@@ -3460,6 +3460,8 @@ impl ScriptThread {
                 window.upcast::<GlobalScope>().set_creation_url(final_url.clone());
                 window.set_viewport_details(incomplete.viewport_details);
                 window.upcast::<GlobalScope>().set_inherited_secure_context(incomplete.load_data.inherited_secure_context);
+                window.upcast::<GlobalScope>().set_top_level_creation_url(final_url.clone());
+                window.set_navigation_start(incomplete.navigation_start);
                 let shared_origin = window.origin();
                 assert!(shared_origin.same_origin(&origin));
                 shared_origin.reset();
