@@ -360,7 +360,7 @@ pub(crate) struct GlobalScope {
     console_count_map: DomRefCell<HashMap<DOMString, usize>>,
 
     /// Is considered in a secure context
-    inherited_secure_context: Option<bool>,
+    inherited_secure_context: Cell<Option<bool>>,
 
     /// Directory to store unminified scripts for this window if unminify-js
     /// opt is enabled.
@@ -831,7 +831,7 @@ impl GlobalScope {
             frozen_supported_performance_entry_types: CachedFrozenArray::new(),
             console_group_stack: DomRefCell::new(Vec::new()),
             console_count_map: Default::default(),
-            inherited_secure_context,
+            inherited_secure_context: inherited_secure_context.into(),
             unminified_js_dir: unminify_js.then(|| unminified_path("unminified-js")),
             byte_length_queuing_strategy_size_function: OnceCell::new(),
             count_queuing_strategy_size_function: OnceCell::new(),
@@ -3184,7 +3184,11 @@ impl GlobalScope {
     }
 
     pub(crate) fn inherited_secure_context(&self) -> Option<bool> {
-        self.inherited_secure_context
+        self.inherited_secure_context.get()
+    }
+
+    pub(crate) fn set_inherited_secure_context(&self, value: Option<bool>) {
+        self.inherited_secure_context.set(value);
     }
 
     /// <https://html.spec.whatwg.org/multipage/#secure-context>
@@ -3193,7 +3197,7 @@ impl GlobalScope {
         // `inherited_secure_context` implements more-or-less the exact same logic, in a
         // different manner. Workers inherit whether or not their in a secure context and
         // worklets do as well (they can only be created in secure contexts).
-        if Some(false) == self.inherited_secure_context {
+        if Some(false) == self.inherited_secure_context.get() {
             return false;
         }
         // Step 1. If environment is an environment settings object, then:
@@ -3210,7 +3214,7 @@ impl GlobalScope {
                 // given environment's top-level creation URL is "Potentially Trustworthy", then return true.
                 // Step 3. Return false.
                 if top_level_creation_url.scheme() == "blob" &&
-                    Some(true) == self.inherited_secure_context
+                    Some(true) == self.inherited_secure_context.get()
                 {
                     return true;
                 }

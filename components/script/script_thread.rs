@@ -3459,6 +3459,7 @@ impl ScriptThread {
                 *window.layout_mut() = self.layout_factory.create(layout_config);
                 window.upcast::<GlobalScope>().set_creation_url(final_url.clone());
                 window.set_viewport_details(incomplete.viewport_details);
+                window.upcast::<GlobalScope>().set_inherited_secure_context(incomplete.load_data.inherited_secure_context);
                 let shared_origin = window.origin();
                 assert!(shared_origin.same_origin(&origin));
                 shared_origin.reset();
