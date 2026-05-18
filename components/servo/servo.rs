@@ -1094,7 +1094,9 @@ impl Servo {
     }
 
     pub fn dump_blocking_loads(&self) {
-        self.0.constellation_proxy.send(EmbedderToConstellationMessage::DumpBlockingLoads);
+        self.0
+            .constellation_proxy
+            .send(EmbedderToConstellationMessage::DumpBlockingLoads);
     }
 
     pub(crate) fn paint<'a>(&'a self) -> Ref<'a, Paint> {
