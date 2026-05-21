@@ -44,12 +44,14 @@
   iframe1.dataset.urlType = "srcdoc";
   iframe1.dataset.inherits = true;
   iframe1.srcdoc = passThroughPolicy.createHTML(`<p>srcdoc</p>${subframeHTML}`);
+  iframe1.loadPromise = new Promise(resolve => iframe1.onload = resolve);
   iframes.push(iframe1);
 
   let iframe2 = document.createElement("iframe");
   iframe2.dataset.urlType = "data";
   iframe2.dataset.inherits = true;
   iframe2.src = `data:text/html,<p>data</p>${subframeHTML}`;
+  iframe2.loadPromise = new Promise(resolve => iframe2.onload = resolve);
   iframes.push(iframe2);
 
   let iframe3 = document.createElement("iframe");
@@ -57,12 +59,14 @@
   iframe3.dataset.inherits = true;
   iframe3.src = URL.createObjectURL(new Blob([`<p>blob</p>${subframeHTML}`],
                                              {type: 'text/html'}));
+  iframe3.loadPromise = new Promise(resolve => iframe3.onload = resolve);
   iframes.push(iframe3);
 
   let iframe4 = document.createElement("iframe");
   iframe4.dataset.urlType = "about:blank";
   iframe4.dataset.inherits = true;
   iframe4.src = "about:blank";
+  iframe4.loadPromise = new Promise(resolve => iframe4.addEventListener('load', resolve));
   iframe4.onload = _ => {
     let iframeDocument = iframe4.contentWindow.document;
     iframeDocument.open();
@@ -76,6 +80,7 @@
   iframe5.dataset.urlType = "blank.html";
   iframe5.dataset.inherits = false;
   iframe5.src = "/common/blank.html";
+  iframe5.loadPromise = new Promise(resolve => iframe5.addEventListener('load', resolve));
   iframe5.onload = _ => {
     let iframeDocument = iframe5.contentWindow.document;
     iframeDocument.open();
@@ -97,6 +102,7 @@
     const whetherItIsInherited = `${inherits ? "should" : "should not"} be inherited`;
 
     promise_test(async _ => {
+      await iframe.loadPromise;
       let exception = await postMessageAndWaitReplyFromIframe(iframe, {
         fn: "setInnerHTML", arg: "unsafe"});
       if (inherits) {
