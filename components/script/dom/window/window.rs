@@ -3822,6 +3822,24 @@ impl Window {
     {
         LayoutValue::new(self.layout_marker.borrow().clone(), value)
     }
+
+    pub(crate) fn prepare_for_document_replacement(
+        &self,
+        layout: Box<dyn Layout>,
+        creation_url: ServoUrl,
+        top_level_creation_url: ServoUrl,
+        navigation_start: CrossProcessInstant,
+    ) {
+        *self.layout.borrow_mut() = layout;
+        self.navigation_start.set(navigation_start);
+
+        let global = self.upcast::<GlobalScope>();
+        global.set_creation_url(creation_url);
+        global.set_top_level_creation_url(top_level_creation_url);
+        global.origin().reset();
+
+        self.Document().disown_window();
+    }
 }
 
 /// An instance of a value associated with a particular snapshot of layout. This stored

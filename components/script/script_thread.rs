@@ -3456,22 +3456,13 @@ impl ScriptThread {
             &origin,
         ) {
             Some(window) => {
-                *window.layout_mut() = self.layout_factory.create(layout_config);
-                window
-                    .upcast::<GlobalScope>()
-                    .set_creation_url(final_url.clone());
-                window.set_viewport_details(incomplete.viewport_details);
-                window
-                    .upcast::<GlobalScope>()
-                    .set_inherited_secure_context(incomplete.load_data.inherited_secure_context);
-                window
-                    .upcast::<GlobalScope>()
-                    .set_top_level_creation_url(final_url.clone());
-                window.set_navigation_start(incomplete.navigation_start);
-                let shared_origin = window.origin();
-                assert!(shared_origin.same_origin(&origin));
-                shared_origin.reset();
-                window.Document().disown_window();
+                window.prepare_for_document_replacement(
+                    self.layout_factory.create(layout_config),
+                    final_url.clone(),
+                    // TODO(37417): Set correct top-level URL here.
+                    final_url.clone(),
+                    incomplete.navigation_start,
+                );
                 window
             },
             None => {
