@@ -102,7 +102,7 @@
     const whetherItIsInherited = `${inherits ? "should" : "should not"} be inherited`;
 
     promise_test(async _ => {
-      await iframe.loadPromise;
+      //await iframe.loadPromise;
       let exception = await postMessageAndWaitReplyFromIframe(iframe, {
         fn: "setInnerHTML", arg: "unsafe"});
       if (inherits) {
