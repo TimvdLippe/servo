@@ -3830,9 +3830,11 @@ impl Window {
         creation_url: ServoUrl,
         top_level_creation_url: ServoUrl,
         navigation_start: CrossProcessInstant,
+        viewport_details: ViewportDetails,
     ) {
         *self.layout.borrow_mut() = layout;
         self.navigation_start.set(navigation_start);
+        self.viewport_details.set(viewport_details);
 
         let global = self.upcast::<GlobalScope>();
         global.set_creation_url(creation_url);

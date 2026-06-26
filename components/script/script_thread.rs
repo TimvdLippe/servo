@@ -3462,6 +3462,7 @@ impl ScriptThread {
                     // TODO(37417): Set correct top-level URL here.
                     final_url.clone(),
                     incomplete.navigation_start,
+                    incomplete.viewport_details,
                 );
                 window
             },
