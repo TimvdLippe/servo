@@ -64,6 +64,7 @@ use rustc_hash::{FxBuildHasher, FxHashMap};
 use script_bindings::cell::{DomRefCell, Ref};
 use script_bindings::codegen::GenericBindings::WindowBinding::ScrollToOptions;
 use script_bindings::conversions::SafeToJSValConvertible;
+use script_bindings::interfaces::HasOrigin;
 use script_bindings::interfaces::WindowHelpers;
 use script_bindings::reflector::DomObject;
 use script_bindings::root::Root;
@@ -557,8 +558,8 @@ impl Window {
         self.globalscope.time_profiler_chan()
     }
 
-    pub(crate) fn origin(&self) -> &MutableOrigin {
-        self.globalscope.origin()
+    pub(crate) fn origin(&self) -> MutableOrigin {
+        self.Document().origin().clone()
     }
 
     pub(crate) fn main_thread_script_chan(&self) -> &Sender<MainThreadScriptMsg> {
@@ -3715,7 +3716,7 @@ impl Window {
                 embedder_chan,
                 resource_threads,
                 storage_threads,
-                origin,
+                //origin,
                 creation_url,
                 Some(top_level_creation_url),
                 #[cfg(feature = "webgpu")]
@@ -3796,7 +3797,7 @@ impl Window {
             about_blank_performance_entry: Default::default(),
         });
 
-        WindowBinding::Wrap::<crate::DomTypeHolder>(cx, win)
+        WindowBinding::Wrap::<crate::DomTypeHolder>(cx, &origin, win)
     }
 
     pub(crate) fn task_manager(&self) -> Rc<TaskManager> {
@@ -4001,5 +4002,11 @@ impl WindowHelpers for Window {
         object: MutableHandleObject,
     ) {
         Self::create_named_properties_object(cx, proto, object)
+    }
+}
+
+impl HasOrigin for Window {
+    fn origin(&self) -> MutableOrigin {
+        Window::origin(self)
     }
 }

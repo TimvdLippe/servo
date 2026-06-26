@@ -341,6 +341,9 @@ pub(crate) struct WorkerGlobalScope {
     /// A [`TaskManager`] for this [`WorkerGlobalScope`].
     #[conditional_malloc_size_of]
     task_manager: Rc<TaskManager>,
+
+    #[no_trace]
+    origin: MutableOrigin,
 }
 
 impl WorkerGlobalScope {
@@ -375,7 +378,6 @@ impl WorkerGlobalScope {
                 init.script_to_embedder_chan,
                 init.resource_threads,
                 init.storage_threads,
-                MutableOrigin::new(init.origin),
                 worker_url.clone(),
                 None,
                 #[cfg(feature = "webgpu")]
@@ -414,6 +416,7 @@ impl WorkerGlobalScope {
                 init.pipeline_id,
                 Some(TaskCanceller { cancelled: closing }),
             )),
+            origin: MutableOrigin::new(init.origin),
         }
     }
 
@@ -680,6 +683,10 @@ impl WorkerGlobalScope {
             &metadata.final_url.clone(),
             &metadata.headers,
         ));
+    }
+
+    pub(crate) fn origin(&self) -> MutableOrigin {
+        self.origin.clone()
     }
 }
 

@@ -75,7 +75,7 @@ pub trait GlobalScopeHelpers<D: DomTypes> {
     unsafe fn from_object(obj: *mut JSObject) -> DomRoot<D::GlobalScope>;
     fn from_reflector(reflector: &impl DomObject, realm: InRealm) -> DomRoot<D::GlobalScope>;
 
-    fn origin(&self) -> &MutableOrigin;
+    fn origin(&self) -> MutableOrigin;
 
     fn incumbent() -> Option<DomRoot<D::GlobalScope>>;
 
@@ -109,4 +109,8 @@ pub trait WindowHelpers {
         proto: HandleObject,
         object: MutableHandleObject,
     );
+}
+
+pub trait HasOrigin {
+    fn origin(&self) -> MutableOrigin;
 }
