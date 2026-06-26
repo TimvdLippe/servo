@@ -3197,10 +3197,6 @@ impl GlobalScope {
         self.inherited_secure_context.get()
     }
 
-    pub(crate) fn set_inherited_secure_context(&self, value: Option<bool>) {
-        self.inherited_secure_context.set(value);
-    }
-
     /// <https://html.spec.whatwg.org/multipage/#secure-context>
     pub(crate) fn is_secure_context(&self) -> bool {
         // This differs from the specification, but it seems that
