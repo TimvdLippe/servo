@@ -120,6 +120,7 @@ impl XMLDocument {
             window,
             cx,
         );
+        doc.upcast::<Document>().initialize_loading_handler();
         {
             let node = doc.upcast::<Node>();
             node.set_owner_doc(&doc.document);

@@ -254,7 +254,7 @@ fn finish_fetching_a_script(
         },
         ExternalScriptKind::ParsingBlocking => {
             let document = elem.parser_document.as_rooted();
-            document.pending_parsing_blocking_script_loaded(elem, load, cx);
+            document.pending_parsing_blocking_script_loaded(cx, elem, load);
         },
     }
 
